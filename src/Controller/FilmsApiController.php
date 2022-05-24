@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/films')]
 class FilmsApiController extends AbstractController
@@ -20,7 +21,7 @@ class FilmsApiController extends AbstractController
     }
 
     #[Route('', name: 'api_films_create', methods: ["POST"])]
-    public function create(Request $request, FilmRepository $filmRepository): Response
+    public function create(Request $request, FilmRepository $filmRepository, ValidatorInterface $validatorInterface): Response
     {
         $data = json_decode($request->getContent(), true);
         $film = new Film();
@@ -32,6 +33,15 @@ class FilmsApiController extends AbstractController
         $film->setDescription($data["description"] ?? null);
         // avec ternaire
         // $film->setDescription($request->get("description") ? $request->get("description") : null);
+
+        // validation de l'objet
+        $errors = $validatorInterface->validate($film);
+
+        // si le validateur remonte une erreur
+        if(count($errors) > 0){
+            // renvoie le message d'erreur
+            return $this->json(["message" => (string) $errors], 400);
+        }
 
         $filmRepository->add($film, true);
 

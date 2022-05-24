@@ -2,15 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\FilmRepository;
+use App\Repository\SerieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-// Validators
-use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: FilmRepository::class)]
-class Film
+#[ORM\Entity(repositoryClass: SerieRepository::class)]
+class Serie
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,25 +18,23 @@ class Film
     #[ORM\Column(type: 'string', length: 255)]
     private $titre;
 
-    #[ORM\Column(type: 'date')]
-    #[Assert\LessThan(
-        value:"today",
-        message:"Marty! Le film n'a pas pu sortir dans le futur !"
-    )]
-    private $date_sortie;
-
     #[ORM\Column(type: 'string', length: 255)]
     private $producteur;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255)]
     private $description;
 
-    #[ORM\ManyToMany(targetEntity: Univers::class, inversedBy: 'films')]
+    #[ORM\Column(type: 'integer')]
+    private $nombre_episodes;
+
+    #[ORM\Column(type: 'date')]
+    private $date_sortie;
+
+    #[ORM\ManyToMany(targetEntity: Univers::class, inversedBy: 'series')]
     private $Univers;
 
     public function __construct()
     {
-        $this->collections = new ArrayCollection();
         $this->Univers = new ArrayCollection();
     }
 
@@ -55,18 +51,6 @@ class Film
     public function setTitre(string $titre): self
     {
         $this->titre = $titre;
-
-        return $this;
-    }
-
-    public function getDateSortie(): ?\DateTimeInterface
-    {
-        return $this->date_sortie;
-    }
-
-    public function setDateSortie(\DateTimeInterface $date_sortie): self
-    {
-        $this->date_sortie = $date_sortie;
 
         return $this;
     }
@@ -88,9 +72,33 @@ class Film
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getNombreEpisodes(): ?int
+    {
+        return $this->nombre_episodes;
+    }
+
+    public function setNombreEpisodes(int $nombre_episodes): self
+    {
+        $this->nombre_episodes = $nombre_episodes;
+
+        return $this;
+    }
+
+    public function getDateSortie(): ?\DateTimeInterface
+    {
+        return $this->date_sortie;
+    }
+
+    public function setDateSortie(\DateTimeInterface $date_sortie): self
+    {
+        $this->date_sortie = $date_sortie;
 
         return $this;
     }
@@ -119,10 +127,9 @@ class Film
         return $this;
     }
 
-
+    
     public function __toString()
     {
-        return $this->getTitre() . ' de ' . $this->getProducteur();
+        return $this->getTitre();
     }
-
 }

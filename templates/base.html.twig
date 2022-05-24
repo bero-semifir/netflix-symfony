@@ -23,7 +23,9 @@
 	<body>
         {# ajout de la navbar avec Twig #}
         {% include('./navbar.html.twig') %}
-		{% block body %}{% endblock %}
+		<div class="content">
+			{% block body %}{% endblock %}
+		</div>
 		{% block footer %}
 			{% include('./footer.html.twig') %}
 		{% endblock %}
