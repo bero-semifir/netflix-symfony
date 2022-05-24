@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Univers;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -13,8 +14,12 @@ class UniversType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('films')
-            ->add('series')
+            ->add('films', null, [
+                'by_reference' => false
+            ])
+            ->add('series', null, [
+                'by_reference' => false
+            ])
         ;
     }
 
